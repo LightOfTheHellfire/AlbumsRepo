@@ -43,9 +43,7 @@ class SectionViewController: UIViewController, UITextFieldDelegate, UITextViewDe
             }
             dismiss(animated: true, completion: nil)
         } else {
-            let dateFormatter  = DateFormatter()
-            dateFormatter.dateFormat = "dd-MM-yyyy"
-            section = Section(name: nameTextField.text!, description: descriptionTextView.text, date: dateFormatter.string(from: Date()))
+            section = Section(name: nameTextField.text!, description: descriptionTextView.text, date: Date())
             self.performSegue(withIdentifier: "unwindToSectionList", sender: self)
         }
     }

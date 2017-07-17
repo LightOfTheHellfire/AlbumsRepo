@@ -12,32 +12,31 @@ import Firebase
 struct Image {
     let storage = Storage.storage().reference()
     let ref = Database.database().reference()
-    var metadata = StorageMetadata()
+    var metaData = StorageMetadata()
     var name: String
     var image: UIImage?
     var section: Section?
     var date: String
+    let dateFormatter  = DateFormatter()
     
-    init(image: UIImage, metadata: StorageMetadata) {
-        self.name = metadata.name!
-        self.metadata = metadata
+    init(image: UIImage, metaData: StorageMetadata) {
+        self.name = metaData.name!
+        self.metaData = metaData
         self.image = image
-        let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "dd-MM-yyyy"
-        self.date = dateFormatter.string(from: metadata.timeCreated!)
+        self.date = dateFormatter.string(from: metaData.timeCreated!)
     }
     
     init(name: String, section: Section, image: UIImage) {
-        let tmpRef = storage.child("images/\(name).jpg")
-        self.name = name
+        self.name = name.hasSuffix(".jpg") ? name : "\(name).jpg"
+        let tmpRef = storage.child("images/\(name)")
         self.section = section
         self.image = image
-        metadata.contentType = "image/jpeg"
-        let dateFormatter = DateFormatter()
+        metaData.contentType = "image/jpeg"
         dateFormatter.dateFormat = "dd-MM-yyyy"
         self.date = dateFormatter.string(from: Date())
-        tmpRef.putData(UIImageJPEGRepresentation(image, 0.7)!, metadata: metadata, completion: nil)
-        self.section?.addUrl(url: "images/\(name).jpg")
+        tmpRef.putData(UIImageJPEGRepresentation(image, 0.5)!, metadata: metaData, completion: nil)
+        self.section?.addUrl(url: "images/\(name)")
     }
     
     

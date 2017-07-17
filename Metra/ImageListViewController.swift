@@ -12,6 +12,7 @@ import Firebase
 class ImageListViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
 
 //MARK: Properties
+    @IBOutlet weak var lastLabel: UILabel!
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var overallLabel: UILabel!
@@ -20,9 +21,10 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
     
     var urls: [String] = []
     var images: [Image] = []
-    var metaData: [StorageMetadata] = []
+    var tempImages: [Image] = []
     var section = Section()
-    var image: UIImage?
+    var newImage: UIImage?
+    var lastImage: Image?
     var selectedItem: IndexPath?
     let reuseIdentifier = "ImageCollectionViewCell"
     
@@ -45,38 +47,58 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
     func getData() {
         Database.database().reference(withPath: "sectionList").child(section.name).child("urls").observeSingleEvent(of: .value, with: { (dataSnapshot:DataSnapshot) in
             for object in dataSnapshot.children.allObjects as! [DataSnapshot] {
-                for obj in object.value as! NSArray {
-                    let url = obj as! String
+                if let urls = object.value as? NSArray {
+                    for obj in urls {
+                        if let url = obj as? String {
+                            self.urls.append(url)
+                            self.getData(url: url)
+                        }
+                    }
+
+                } else {
+                    let url = object.value as! String
                     self.urls.append(url)
-                    self.getMetaData(url: url)
-                    self.getImage(url: url)
+                    self.getData(url: url)
                 }
             }
         })
     }
     
-    func getMetaData(url: String) {
+    func getData(url: String) {
         storageRef.reference(withPath: url).getMetadata(completion: { data, error in
             if let data = data {
-                self.metaData.append(data)
+                self.getImage(url: url, metaData: data)
             }
         })
     }
     
-    func getImage(url: String){
+    func getImage(url: String, metaData: StorageMetadata){
         storageRef.reference(withPath: url).getData(maxSize: 10 * 1024 * 1024, completion:  { data, error in
             if let data = data {
-                let img = Image(image: UIImage(data: data)!, metadata: self.metaData[self.images.count])
-                if self.images.count != self.urls.count - 1 {
-                    self.images.append(img)
+                let img = Image(image: UIImage(data: data)!, metaData: metaData)
+                if self.tempImages.count < self.urls.count - 1 {
+                    self.tempImages.append(img)
                     self.imageCollectionView.reloadData()
                 } else {
-                    self.imageView.image = img.image
-                    self.nameLabel.text = "Name: \(img.name)"
-                    self.dateLabel.text = "Date: \(img.date)"
+                    self.tempImages.append(img)
+                    self.sortImages()
                 }
             }
         })
+    }
+    
+    func sortImages() {
+        if tempImages.count > 0 {
+            images = tempImages.sorted(by: { $0.metaData.timeCreated! > $1.metaData.timeCreated! })
+            imageView.image = images[0].image
+            overallLabel.text = "Overall: \(tempImages.count + 1)"
+            nameLabel.text = "Name: \(images[0].name)"
+            dateLabel.text = "Date: \(images[0].date)"
+            lastImage = images[0]
+            lastLabel.isHidden = false
+            images.remove(at: 0)
+            imageCollectionView.reloadData()
+        }
     }
     
     
@@ -118,7 +140,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
         })
         let confirmAction = UIAlertAction(title: "OK", style: .default, handler: {(_ action: UIAlertAction) -> Void in
             let name = (alert.textFields?.first?.text)!
-            self.addData(imageName: name)
+            self.addData(imageName: ("\(name)"))
         })
         alert.addAction(confirmAction)
         self.present(alert, animated: true, completion:  nil)
@@ -126,24 +148,40 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
     }
     
     func addData(imageName: String?) {
-        if imageName != nil && image != nil {
-            let imageDataObject = Image(name: imageName!, section: self.section, image: self.image!)
-            images.append(Image(image: imageView.image!, metadata: metaData[images.count]))
-            imageView.image = imageDataObject.image
-            image = nil
+        if imageName != nil && newImage != nil {
+            let newImageObject = Image(name: imageName!, section: self.section, image: self.newImage!)
+            if imageView.image != nil {
+                images.append(lastImage!)
+            }
+            nameLabel.text = "Name: \(newImageObject.name)"
+            dateLabel.text = "Date: \(newImageObject.date)"
+            overallLabel.text = "Overall: \(images.count + 1)"
+            imageView.image = newImageObject.image
+            newImage = nil
+            lastLabel.isHidden = false
+            lastImage = newImageObject
             imageCollectionView.reloadData()
         }
     }
     
 //MARK: CollectionView
     func deleteRow(_ sender: UIButton?) {
+        print("Item = \(sender?.tag)")
         let item = images[(sender?.tag)!]
-        storageRef.reference(withPath: "images/\(item.metadata.name)").delete { _ in
-            self.images.remove(at: (sender?.tag)!)
-            self.section.urls.remove(at: (sender?.tag)!)
-            self.urls.remove(at: (sender?.tag)!)
-            self.section.ref?.updateChildValues(["urls": self.urls])
-            self.imageCollectionView.reloadData()
+        let name = item.name.components(separatedBy: ".jpg").joined()
+        Storage.storage().reference(withPath: "images/\(name)").delete { error in
+            if let err = error {
+                print("errorr\(err.localizedDescription)")
+            } else {
+                for (i, url) in self.section.urls.enumerated() {
+                    if url.components(separatedBy: "images/").joined() == item.name {
+                        self.section.urls.remove(at: i)
+                    }
+                }
+                self.section.ref?.updateChildValues(["urls": self.section.urls])
+                self.images.remove(at: (sender?.tag)!)
+                self.imageCollectionView.reloadData()
+            }
         }
     }
 
@@ -169,6 +207,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
     }
 
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        print(indexPath.item)
         selectedItem = indexPath
     }
     
@@ -188,7 +227,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
 extension  ImageListViewController {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {
-            image = originalImage
+            newImage = originalImage
         }
         self.dismiss(animated: true, completion: nil)
         self.addName()
