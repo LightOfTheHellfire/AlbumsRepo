@@ -31,10 +31,7 @@ class Section {
         let snapshotValue = snapshot.value as! [String: AnyObject]
         name = snapshotValue["name"] as! String
         description = snapshotValue["description"] as! String
-        date = snapshotValue["date"] as! String
-
-        //let ref = Database.database().reference(withPath: "sectionList")
-        
+        date = snapshotValue["date"] as! String        
         snapshot.ref.child("urls").observeSingleEvent(of: .value, with: { (dataSnapshot:DataSnapshot) in
             for object in dataSnapshot.children.allObjects as! [DataSnapshot] {
                 for obj in object.value as! NSArray {

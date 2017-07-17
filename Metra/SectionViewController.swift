@@ -10,6 +10,7 @@ import UIKit
 
 class SectionViewController: UIViewController, UITextFieldDelegate, UITextViewDelegate {
     
+//MARK: Properties
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var descriptionTextView: UITextView!
     @IBOutlet weak var saveButton: UIBarButtonItem!
@@ -28,6 +29,7 @@ class SectionViewController: UIViewController, UITextFieldDelegate, UITextViewDe
         nameTextField.delegate = self
         descriptionTextView.delegate = self    }
 
+//MARK: Actions
     @IBAction func cancel(_ sender: UIBarButtonItem) {
         dismiss(animated: true, completion: nil)
     }
@@ -57,14 +59,4 @@ class SectionViewController: UIViewController, UITextFieldDelegate, UITextViewDe
             saveButton.isEnabled = true
         }
     }
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
-    }
-    */
-
 }

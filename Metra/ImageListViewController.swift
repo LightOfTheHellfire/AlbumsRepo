@@ -10,7 +10,8 @@ import UIKit
 import Firebase
 
 class ImageListViewController: UIViewController, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout, UICollectionViewDataSource, UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
+
+//MARK: Properties
     @IBOutlet weak var dateLabel: UILabel!
     @IBOutlet weak var nameLabel: UILabel!
     @IBOutlet weak var overallLabel: UILabel!
@@ -35,6 +36,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
         imageCollectionView.dataSource = self
     }
     
+//MARK: Actions
     @IBAction func goBack(_ sender: UIBarButtonItem) {
         self.dismiss(animated: true, completion: nil)
     }
@@ -133,7 +135,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
         }
     }
     
-    
+//MARK: CollectionView
     func deleteRow(_ sender: UIButton?) {
         let item = images[(sender?.tag)!]
         storageRef.reference(withPath: "images/\(item.metadata.name)").delete { _ in
@@ -174,7 +176,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
                         layout collectionViewLayout: UICollectionViewLayout,
                         sizeForItemAt indexPath: IndexPath) -> CGSize {
         let screenSize = UIScreen.main.bounds
-        let width = screenSize.width / 2.4
+        let width = screenSize.width / 2.55
         
         return CGSize(width: width, height: width)
     }
@@ -182,6 +184,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
 
 }
 
+////MARK: ImagePickerController
 extension  ImageListViewController {
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [String : Any]) {
         if let originalImage = info[UIImagePickerControllerOriginalImage] as? UIImage {

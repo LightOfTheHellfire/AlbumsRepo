@@ -14,7 +14,6 @@
 		84CADA0F1F19375700BA89A0 /* SectionListTableViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA0E1F19375700BA89A0 /* SectionListTableViewController.swift */; };
 		84CADA111F19553300BA89A0 /* SectionViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA101F19553300BA89A0 /* SectionViewController.swift */; };
 		84CADA131F19558D00BA89A0 /* ImageListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA121F19558D00BA89A0 /* ImageListViewController.swift */; };
-		84CADA151F1955AF00BA89A0 /* ImageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA141F1955AF00BA89A0 /* ImageViewController.swift */; };
 		84CADA171F19571F00BA89A0 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 84CADA161F19571F00BA89A0 /* GoogleService-Info.plist */; };
 		84CADA191F19701A00BA89A0 /* Section.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA181F19701A00BA89A0 /* Section.swift */; };
 		84CADA1B1F19774F00BA89A0 /* Image.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84CADA1A1F19774F00BA89A0 /* Image.swift */; };
@@ -35,7 +34,6 @@
 		84CADA0E1F19375700BA89A0 /* SectionListTableViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionListTableViewController.swift; sourceTree = "<group>"; };
 		84CADA101F19553300BA89A0 /* SectionViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SectionViewController.swift; sourceTree = "<group>"; };
 		84CADA121F19558D00BA89A0 /* ImageListViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageListViewController.swift; sourceTree = "<group>"; };
-		84CADA141F1955AF00BA89A0 /* ImageViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ImageViewController.swift; sourceTree = "<group>"; };
 		84CADA161F19571F00BA89A0 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		84CADA181F19701A00BA89A0 /* Section.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Section.swift; sourceTree = "<group>"; };
 		84CADA1A1F19774F00BA89A0 /* Image.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Image.swift; sourceTree = "<group>"; };
@@ -138,7 +136,6 @@
 				84CADA0E1F19375700BA89A0 /* SectionListTableViewController.swift */,
 				84CADA101F19553300BA89A0 /* SectionViewController.swift */,
 				84CADA121F19558D00BA89A0 /* ImageListViewController.swift */,
-				84CADA141F1955AF00BA89A0 /* ImageViewController.swift */,
 				84CADA1E1F19810600BA89A0 /* SectionCell.swift */,
 				84CADA241F19E72E00BA89A0 /* ImageCollectionViewCell.swift */,
 			);
@@ -296,7 +293,6 @@
 				84CADA191F19701A00BA89A0 /* Section.swift in Sources */,
 				84CADA251F19E72E00BA89A0 /* ImageCollectionViewCell.swift in Sources */,
 				84CADA111F19553300BA89A0 /* SectionViewController.swift in Sources */,
-				84CADA151F1955AF00BA89A0 /* ImageViewController.swift in Sources */,
 				84CAD9F41F19248E00BA89A0 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
