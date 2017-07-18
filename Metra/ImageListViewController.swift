@@ -33,35 +33,44 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        getData()
+        getUrls()
         imageCollectionView.delegate = self
         imageCollectionView.dataSource = self
     }
     
 //MARK: Actions
     @IBAction func goBack(_ sender: UIBarButtonItem) {
+        urls.removeAll()
+        images.removeAll()
+        tempImages.removeAll()
         self.dismiss(animated: true, completion: nil)
     }
     
     
-    func getData() {
-        Database.database().reference(withPath: "sectionList").child(section.name).child("urls").observeSingleEvent(of: .value, with: { (dataSnapshot:DataSnapshot) in
-            for object in dataSnapshot.children.allObjects as! [DataSnapshot] {
-                if let urls = object.value as? NSArray {
-                    for obj in urls {
-                        if let url = obj as? String {
-                            self.urls.append(url)
-                            self.getData(url: url)
-                        }
-                    }
-
-                } else {
-                    let url = object.value as! String
-                    self.urls.append(url)
-                    self.getData(url: url)
-                }
+    func getUrls() {
+        if section.urls.count > 0 {
+            for url in section.urls {
+                urls.append(url)
+                getData(url: url)
             }
-        })
+        }
+//        Database.database().reference(withPath: "sectionList").child(section.name).child("urls").observeSingleEvent(of: .value, with: { (dataSnapshot:DataSnapshot) in
+//            for object in dataSnapshot.children.allObjects as! [DataSnapshot] {
+//                if let urls = object.value as? NSArray {
+//                    for obj in urls {
+//                        if let url = obj as? String {
+//                            self.urls.append(url)
+//                            self.getData(url: url)
+//                        }
+//                    }
+//
+//                } else {
+//                    let url = object.value as! String
+//                    self.urls.append(url)
+//                    self.getData(url: url)
+//                }
+//            }
+//        })
     }
     
     func getData(url: String) {
@@ -91,7 +100,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
         if tempImages.count > 0 {
             images = tempImages.sorted(by: { $0.metaData.timeCreated! > $1.metaData.timeCreated! })
             imageView.image = images[0].image
-            overallLabel.text = "Overall: \(tempImages.count + 1)"
+            overallLabel.text = "Overall: \(tempImages.count)"
             nameLabel.text = "Name: \(images[0].name)"
             dateLabel.text = "Date: \(images[0].date)"
             lastImage = images[0]
@@ -153,13 +162,13 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
             if imageView.image != nil {
                 images.append(lastImage!)
             }
-            nameLabel.text = "Name: \(newImageObject.name)"
-            dateLabel.text = "Date: \(newImageObject.date)"
+            lastImage = newImageObject
+            nameLabel.text = "Name: \(lastImage?.name)"
+            dateLabel.text = "Date: \(lastImage?.date)"
             overallLabel.text = "Overall: \(images.count + 1)"
             imageView.image = newImageObject.image
             newImage = nil
             lastLabel.isHidden = false
-            lastImage = newImageObject
             imageCollectionView.reloadData()
         }
     }
@@ -180,6 +189,7 @@ class ImageListViewController: UIViewController, UICollectionViewDelegate, UICol
                 }
                 self.section.ref?.updateChildValues(["urls": self.section.urls])
                 self.images.remove(at: (sender?.tag)!)
+                self.overallLabel.text = "Overall: \(self.images.count + 1)"
                 self.imageCollectionView.reloadData()
             }
         }
